@@ -1,66 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# アプリケーション名  
+書籍レビューアプリ BookShelf  
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 概要  
+- 目的  
+    実務を想定したWebアプリケーション開発と、曖昧な要件から自ら仕様を設計しPMと詳細を詰めるプロセスを経験すること
+    
+- 実装機能  
+    認証: ユーザー登録、メール認証、ログイン（一般ユーザー・管理者）、ログアウト  
+    出勤登録（一般）: 出勤・休憩・退勤処理  
+    勤怠（一般）: 勤怠一覧・勤怠詳細・申請一覧・勤怠統計レポート画面表示、勤怠修正申請処理  
+    API: お問い合わせのCRUD処理（一覧、詳細、作成、更新、削除）  
 
-## About Laravel
+# 環境構築
+Laravel環境構築  
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. ```git clone git@github.com:Kazuki-Yamaoka/bookshelf-app.git```
+2. ```cd bookshelf-app```   
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+＊ MySQLは、OSによって起動しない場合があるのでそれぞれのPCに合わせて docker-compose.yml ファイルを編集してください。  
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. パッケージをインストール
+    ```
+        docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
+        laravelsail/php82-composer:latest \
+        composer require laravel/sail --dev
+    ```
+4. ```cp .env.example .env```
+5. ```./vendor/bin/sail up -d```
+6. ```./vendor/bin/sail artisan key:generate```
+7. .env ファイルを開き、データベース接続情報が以下と一致していることを確認します。
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=mysql
+    DB_PORT=3306
+    DB_DATABASE=laravel
+    DB_USERNAME=sail
+    DB_PASSWORD=password
+    ```
+8. ```sail npm install```
+    > 重要: sail npm install を実行する前に、必ずSailコンテナが起動していることを確認してください。
+9. ```sail npm run dev```
+10. ```sail artisan migrate --seed```  
+    ※既存のデータベースをリセットしたい場合は以下を実行してください。  
+    ```sail artisan migrate:fresh --seed```
+11. ```sail artisan test```
 
-## Learning Laravel
+# 使用技術（実行環境）
+- PHP: 8.5.9
+- Laravel: 10.50.3
+- Composer: 2.10.3
+- MySQL: 8.4.11
+- Docker: 29.7.2
+- Docker Compose: 5.5.0
+- npm: 12.0.2
+- Git: 2.53.0
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# ER図
+![ER図](ER.drawio.png)  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# APIエンドポイント一覧
+- GET /api/v1/attendance-records　勤怠一覧
+- GET /api/v1/attendance-records/{attendanceRecord}　勤怠詳細
+- POST /api/v1/attendance-records　勤怠登録
+- PUT /api/v1/attendance-records/{attendanceRecord}　勤怠更新
+- DELETE /api/v1/attendance-records/{attendanceRecord}　勤怠削除
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# URL
+- 開発環境: http://localhost/
+- 会員登録画面（一般ユーザー）: http://localhost/register
+- ログイン画面（一般ユーザー）: http://localhost/login
+- 出勤登録画面（一般ユーザー）: http://localhost/attendance
+- Mysql : http://localhost:8080/
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 作成者
+山岡 一幾
