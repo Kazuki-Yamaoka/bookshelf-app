@@ -1,0 +1,30 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Book;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Book>
+ */
+class BookFactory extends Factory
+{
+    protected $model = Book::class;
+
+    public function definition(): array
+    {
+        $number = fake()->numberBetween(1, 11);
+
+        return [
+            'title' => fake()->sentence(3),
+            'author' => fake()->name(),
+            'isbn' => fake()->unique()->numerify('978##########'),
+            'published_date' => fake()->date(),
+            'description' => fake()->sentence(10),
+            'image_url' => "https://placehold.co/200x300/e2e8f0/475569?text={$number}",
+            'user_id' => User::query()->inRandomOrder()->first()?->id ?? User::factory(),
+        ];
+    }
+}
